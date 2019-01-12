@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>guess</title>
+<style type="text/css">
+  #table,#table tr,#table td{
+    border:1px solid black;
+    border-collapse: collapse;
+  }
+</style>
+
+<!-- <script src="vendor/angular.min.js"></script> -->
+<script type="text/javascript" src="guess.js"></script>
+<script type="text/javascript" src="guess2.js"></script>
+<script type="text/javascript" src="path.js"></script>
+<script type="text/javascript" 
+        src="jquery.min.js"></script>
+<script type="text/javascript">
+  //body加载完调用;
+  $(function(){
+	  //$("#result").html("输入的数字不能为空");
+	  //1.随机生成一个1-100之间的整数;
+	    var num= parseInt(Math.random()*100);
+	    console.log("随机生成的num:"+num);
+	  //$("#guess").click(guessAction);
+	  
+	  //4.给清空记录按钮绑定事件;
+	  $("#delete").click(deleteAction);
+	  //3.给查询记录按钮绑定事件;
+	  $("#select").click(selectAction);
+	  
+	  //2.给猜数字按钮绑定事件;
+	  $("#guess").click(function(){
+		  console.log("num++:"+num);
+			//获取文本框里填入的数字;
+			var num2= $("#num").val().trim();
+			console.log("num2:"+num2);
+			if(isNaN(num2)){
+				//result.innerHTML="请输入正确格式的数字";
+				$("#result").html("请输入数字");
+			}else if(num2==""){
+				//result.innerHTML="输入的数字不能为空";
+				$("#result").html("输入的数字不能为空");
+			}else{
+				console.log("进入ajax..");
+				console.log("num+2:"+num);
+				$.ajax({
+					url:path+"guess.do",
+					type:"post",
+					data:{"num":num,"num2":num2},
+					dataType:"json",
+					success:function(result){
+						//console.log("结果返回成功!");
+						if(result.state==0){
+							$("#result").html(result.data);
+						}else if(result.state==2){
+							$("#result").html(result.message);
+						}else{
+							$("#result").html("其他错误");
+						}
+					},
+					error:function(){
+						alert("返回结果出错");
+					}
+				});
+			}
+  		});
+  });  
+</script>
+<!-- <script>
+	var app = angular.module('myApp', []);
+	app.controller('myCtrl', function($scope) {
+	    $scope.carname = "BMW";
+	    $scope.names = ["Emil", "Tobias", "Linus"];
+	});
+</script> -->
+
+</head>
+<body>
+
+<!-- angularJS测试 -->
+<!-- <div ng-app="myApp" ng-controller="myCtrl">
+  <p>在输入框中尝试输入：</p>
+  <p>姓名：<input type="text" ng-model="name"></p>
+  <p ng-bind="name"></p>
+  <p>姓名(ng-repeat)：</p>
+  <ul>
+    <li ng-repeat="x in names">{{x}}</li>
+  </ul>
+  <p>坐骑：
+  	<span ng-bind="carname"></span>
+  </p>
+</div> -->
+
+<h1>猜数字小游戏</h1>
+<input id="num">
+<input type="button" value="猜(100以内)" id="guess">
+<span id="result"></span>
+<br/><br/>
+<input type="button" value="查询操作记录" id="select">
+<input type="button" value="清空记录" id="delete">
+<br/><br/>
+<table id="table">
+  <tr>
+    <td>ID</td>
+    <td>数字输入</td>
+    <td>判断结果</td>
+    <td>操作时间</td>
+  </tr>
+</table>
+
+
+</body>
+</html>
